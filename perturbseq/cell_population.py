@@ -13,6 +13,8 @@
 
 import pandas as pd
 import numpy as np
+import numexpr
+import tables
 from scipy.io import mmread
 import os
 import six
@@ -118,7 +120,7 @@ class CellPopulation:
         print('Done in {0}s.'.format(time() - t))
         
     @classmethod
-    def from_file(cls, directory, genome=None, filtered=True, raw_umi_threshold=2000):
+    def from_file(cls, directory, genome='GRCh38', filtered=True, raw_umi_threshold=2000):
         """Load a Perturb-seq data set from cellranger's matrix market exchange format
         
         Args:
@@ -128,8 +130,6 @@ class CellPopulation:
         Example:
             >>>pop = CellPopulation.from_file('~/sequencing/perturbseq_expt/', genome='GRCh38')
         """
-        if genome is None:
-            genome = 'GRCh38'
         
         # output of cellranger count and cellranger aggr has slightly different structure
         if os.path.isdir(os.path.join(directory, os.path.normpath("outs/filtered_gene_bc_matrices"), genome)):
